@@ -12,7 +12,7 @@ Dont forget to update changelog box upon changes.<br>
 06.09.2021
 *   Changed terraform binary from zip to tar.gz
     Added a deploy.sh file
-    Remove tsstate and tfstate.backup
+    Remove tfstate and tfstate.backup
 ```
 ## TODO
 ```
