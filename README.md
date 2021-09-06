@@ -25,4 +25,5 @@ Add the following headers to nginx.conf:
    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
    add_header X-XSS-Protection "1; mode=block";
    ssl_protocols TLSv1.2 TLSv1.3;
+Enable stub_status in nginx for better metrics.
 ```
