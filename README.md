@@ -17,7 +17,7 @@ Dont forget to update changelog box upon changes.<br>
 ## TODO
 ```
 Only 08,443,22 should be opened.
-Redirect all traffic from 80 to 444.
+Redirect all traffic from 80 to 443.
 Create SSL certificates.
 Add the following headers to nginx.conf:
    add_header X-Frame-Options "SAMEORIGIN";
