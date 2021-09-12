@@ -5,14 +5,17 @@ resource "aws_ecs_cluster" "main" {
 }
 
 data "template_file" "myapp" {
-  template = file("./templates/ecs/myapp.json.tpl")
+  template = file("${path.module}/files/containers_task.json.tpl")
 
   vars = {
-    app_image      = var.app_image
-    app_port       = var.app_port
-    fargate_cpu    = var.fargate_cpu
-    fargate_memory = var.fargate_memory
-    aws_region     = var.aws_region
+    app_image                    = var.app_image
+    app_port                     = var.app_port
+    fargate_cpu                  = var.fargate_cpu
+    fargate_memory               = var.fargate_memory
+    aws_region                   = var.aws_region
+    prometheus_config            = "${base64encode(data.template_file.prometheus_config.rendered)}"
+    grafana_datasource_config    = "${base64encode(data.template_file.grafana_datasource_config.rendered)}"
+    blackbox_config              = "${base64encode(data.template_file.blackbox_config.rendered)}"
   }
 }
 
@@ -24,6 +27,31 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
   container_definitions    = data.template_file.myapp.rendered
+
+  volume {
+    name      = "config"
+
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.efs_datastore.id
+    }
+  }
+
+  volume {
+    name      = "prometheus-data"
+
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.efs_datastore.id
+    }
+  }
+
+  volume {
+    name      = "grafana-data"
+
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.efs_datastore.id
+    }
+  }
+
 }
 
 resource "aws_ecs_service" "main" {
