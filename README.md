@@ -1,6 +1,6 @@
 # ecs homework
 
-Following code provides to ability to create a simple ecs cluster with nginx and prometheus dockers in eu-central-1 region.<br>
+Following code provides to ability to create a simple ecs cluster with nginx/grafana/prometheus dockers.<br>
 To deply the environment please use deploy.sh script:<br>
 ```
    ./deploy.sh --deploy: to create an environment 
@@ -9,6 +9,13 @@ To deply the environment please use deploy.sh script:<br>
 ## Changelog
 Dont forget to update changelog box upon changes.<br>
 ```
+13.0.2021
+*   Added grafana dashboards.
+    Added prometheus/grafana/blackbox configurations.
+    Added efs share.
+    Added init container (centos 7) for data/configuraion sharing.
+    Added target_groups for each microservice to be accesable via microservice location http://<url>/<microservice>
+
 06.09.2021
 *   Changed terraform binary from zip to tar.gz
     Added a deploy.sh file

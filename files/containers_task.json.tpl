@@ -49,7 +49,9 @@
         }
     },
     "command": [
-      "--config.file=/etc/configs/prometheus/prometheus.yml"
+      "--config.file=/etc/configs/prometheus/prometheus.yml",
+      "--web.route-prefix=prometheus",
+      "--web.external-url=http://${site_url}/prometheus"
     ],
     "entryPoint": null,
     "environment": [],
@@ -102,6 +104,14 @@
       {
         "name": "GF_PATHS_PROVISIONING",
         "value": "/etc/configs/grafana"
+      },
+      {
+        "name": "GF_SERVER_ROOT_URL",
+        "value": "http://${site_url}/grafana"
+      },
+      {
+        "name": "GF_SERVER_SERVE_FROM_SUB_PATH",
+        "value": "true"
       }
 	],
     "essential": true,
@@ -187,7 +197,7 @@
     "command": [
       "/bin/sh",
       "-c",
-      "mkdir -p /etc/configs/{prometheus,grafana,blackbox} && echo $PROMETHEUS_CONFIG|base64 --decode > /etc/configs/prometheus/prometheus.yml && echo $GRAFANA_DATASOURCE_CONFIG|base64 --decode > /etc/configs/grafana/datasource.yml && echo $BLACKBOX_CONFIG|base64 --decode > /etc/configs/blackbox/blackbox.yml && chmod -R 777 /etc/configs"
+      "mkdir -p /etc/configs/{prometheus,grafana/datasources,grafana/dashboards,grafana/dashboards-jsons,blackbox} && echo $PROMETHEUS_CONFIG|base64 --decode > /etc/configs/prometheus/prometheus.yml && echo $GRAFANA_DATASOURCE_CONFIG|base64 --decode > /etc/configs/grafana/datasources/datasource.yml && echo $GRAFANA_DASHBOARDS_CONFIG|base64 --decode > /etc/configs/grafana/dashboards/dashboards-path.yaml && echo $GRAFANA_MONITOR_WEB_DASH|base64 --decode > /etc/configs/grafana/dashboards-jsons/dashboard.json && echo $BLACKBOX_CONFIG|base64 --decode > /etc/configs/blackbox/blackbox.yml && chmod -R 777 /etc/configs"
     ],
     "entryPoint": [],
     "environment": [
@@ -198,6 +208,14 @@
       {
         "name": "GRAFANA_DATASOURCE_CONFIG",
         "value": "${grafana_datasource_config}"
+      },
+      {
+        "name": "GRAFANA_DASHBOARDS_CONFIG",
+        "value": "${grafana_dashboards_config}"
+      },
+      {
+        "name": "GRAFANA_MONITOR_WEB_DASH",
+        "value": "${grafana_monitor_web_dash}"
       },
       {
         "name": "BLACKBOX_CONFIG",

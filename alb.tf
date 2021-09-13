@@ -26,8 +26,8 @@ resource "aws_alb_target_group" "app" {
 
 resource "aws_alb_target_group" "grafana" {
   name        = "grafana-target-group"
-  port        = 3000 
-  protocol    = "tcp"
+  port        = 3000
+  protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "ip"
 
@@ -35,11 +35,32 @@ resource "aws_alb_target_group" "grafana" {
     healthy_threshold   = "3"
     interval            = "30"
     protocol            = "HTTP"
-    matcher             = "200"
+    matcher             = "302"
     timeout             = "3"
     path                = "/grafana"
     unhealthy_threshold = "2"
   }
+
+}
+
+
+resource "aws_alb_target_group" "prometheus" {
+  name        = "prometheus-target-group"
+  port        = 9090
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "2"
+    interval            = "5"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = "/prometheus/graph"
+    unhealthy_threshold = "2"
+  }
+
 }
 
 
@@ -55,7 +76,8 @@ resource "aws_alb_listener" "front_end" {
   }
 }
 
-resource "aws_alb_listener_rule" "redirect" {
+
+resource "aws_alb_listener_rule" "redirect_grafana" {
   listener_arn = aws_alb_listener.front_end.arn
   priority     = 100
 
@@ -66,7 +88,23 @@ resource "aws_alb_listener_rule" "redirect" {
 
   condition {
     path_pattern {
-      values = ["/grafana"]
+      values = ["/grafana/*"]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "redirect_prometheus" {
+  listener_arn = aws_alb_listener.front_end.arn
+  priority     = 101
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.prometheus.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/prometheus/*"]
     }
   }
 }
@@ -84,4 +122,3 @@ resource "aws_alb_listener_rule" "redirect" {
 #    target_group_arn = aws_alb_target_group.app.id
 #  }
 #}
-

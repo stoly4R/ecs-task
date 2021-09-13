@@ -1,7 +1,6 @@
-
 global:
-  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_interval: 15s
+  evaluation_interval: 15s
 
 alerting:
   alertmanagers:
@@ -15,11 +14,11 @@ scrape_configs:
         module: [http_2xx]
     static_configs:
         - targets:
-            - https://github.com
+            - http://${site_url}
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 172.19.100.2:9115  # The blackbox exporter's real hostname:port.
+        replacement: 127.0.0.1:9115

@@ -13,8 +13,11 @@ data "template_file" "myapp" {
     fargate_cpu                  = var.fargate_cpu
     fargate_memory               = var.fargate_memory
     aws_region                   = var.aws_region
+    site_url                     = aws_alb.main.dns_name
     prometheus_config            = "${base64encode(data.template_file.prometheus_config.rendered)}"
     grafana_datasource_config    = "${base64encode(data.template_file.grafana_datasource_config.rendered)}"
+    grafana_dashboards_config    = "${base64encode(data.template_file.grafana_dashboards_config.rendered)}"
+    grafana_monitor_web_dash     = "${base64encode(data.template_file.grafana_monitor_web_dash.rendered)}"
     blackbox_config              = "${base64encode(data.template_file.blackbox_config.rendered)}"
   }
 }
@@ -71,6 +74,18 @@ resource "aws_ecs_service" "main" {
     target_group_arn = aws_alb_target_group.app.id
     container_name   = "myapp"
     container_port   = var.app_port
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.grafana.id
+    container_name   = "grafana"
+    container_port   = 3000
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.prometheus.id
+    container_name   = "prometheus"
+    container_port   = 9090
   }
 
   depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
