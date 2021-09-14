@@ -13,7 +13,7 @@ Dont forget to update changelog box upon changes.<br>
 *   Added grafana dashboards.
     Added prometheus/grafana/blackbox configurations.
     Added efs share.
-    Added init container (centos 7) for data/configuraion sharing.
+    Added sidecar container (centos 7) for data/configuraion sharing.
     Added target_groups for each microservice to be accesable via microservice location http://<url>/<microservice>
 
 06.09.2021
