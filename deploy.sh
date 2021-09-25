@@ -17,6 +17,7 @@ while test $# -gt 0; do
       else
       tar -zxvf terraform_0.13.0_linux_amd64.tar.gz
       ./terraform init
+      ./terraform apply -auto-approve
       fi
       shift
       ;;
